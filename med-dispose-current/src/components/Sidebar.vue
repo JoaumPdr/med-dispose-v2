@@ -1,14 +1,14 @@
 <template>
   <!-- Overlay -->
-  <div 
-    v-if="isOpen" 
-    class="fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity duration-300"
-    @click="closeSidebar"
+  <div
+      v-if="isOpen"
+      class="fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity duration-300"
+      @click="closeSidebar"
   ></div>
 
   <!-- Sidebar -->
-  <div 
-    :class="`fixed top-0 left-0 h-full w-80 bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${
+  <div
+      :class="`fixed top-0 left-0 h-full w-80 bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${
       isOpen ? 'translate-x-0' : '-translate-x-full'
     }`"
   >
@@ -22,10 +22,10 @@
         </div>
         <h2 class="text-xl font-bold text-gray-900">Medical App</h2>
       </div>
-      
-      <button 
-        @click="closeSidebar"
-        class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+
+      <button
+          @click="closeSidebar"
+          class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
       >
         <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -37,9 +37,9 @@
     <div class="p-6">
       <nav class="space-y-4">
         <!-- Dashboard -->
-        <button 
-          @click="navigateTo('dashboard')"
-          class="w-full flex items-center space-x-4 p-4 rounded-xl hover:bg-blue-50 transition-colors group"
+        <button
+            @click="navigateTo('dashboard')"
+            class="w-full flex items-center space-x-4 p-4 rounded-xl hover:bg-blue-50 transition-colors group"
         >
           <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center group-hover:bg-blue-200 transition-colors">
             <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -53,9 +53,9 @@
         </button>
 
         <!-- Adicionar Remédios -->
-        <button 
-          @click="navigateTo('add-medication')"
-          class="w-full flex items-center space-x-4 p-4 rounded-xl hover:bg-green-50 transition-colors group"
+        <button
+            @click="navigateTo('add-medication')"
+            class="w-full flex items-center space-x-4 p-4 rounded-xl hover:bg-green-50 transition-colors group"
         >
           <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center group-hover:bg-green-200 transition-colors">
             <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -72,9 +72,9 @@
         <div class="border-t border-gray-200 my-6"></div>
 
         <!-- Additional Menu Items -->
-        <button 
-          @click="navigateTo('hospitals')"
-          class="w-full flex items-center space-x-4 p-4 rounded-xl hover:bg-gray-50 transition-colors group"
+        <button
+            @click="navigateTo('hospitals')"
+            class="w-full flex items-center space-x-4 p-4 rounded-xl hover:bg-gray-50 transition-colors group"
         >
           <div class="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center group-hover:bg-gray-200 transition-colors">
             <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -87,9 +87,9 @@
           </div>
         </button>
 
-        <button 
-          @click="navigateTo('medications')"
-          class="w-full flex items-center space-x-4 p-4 rounded-xl hover:bg-gray-50 transition-colors group"
+        <button
+            @click="goToMedicamentos"
+            class="w-full flex items-center space-x-4 p-4 rounded-xl hover:bg-gray-50 transition-colors group"
         >
           <div class="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center group-hover:bg-gray-200 transition-colors">
             <svg class="w-6 h-6 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
@@ -99,6 +99,21 @@
           <div class="text-left">
             <h3 class="font-semibold text-gray-900">Medicamentos</h3>
             <p class="text-sm text-gray-500">Gerenciar estoque</p>
+          </div>
+        </button>
+
+        <button
+            @click="goToConversas"
+            class="w-full flex items-center space-x-4 p-4 rounded-xl hover:bg-purple-50 transition-colors group"
+        >
+          <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center group-hover:bg-purple-200 transition-colors">
+            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2v-8a2 2 0 012-2h2m10 0V6a4 4 0 00-8 0v2m8 0H7" />
+            </svg>
+          </div>
+          <div class="text-left">
+            <h3 class="font-semibold text-gray-900">Conversas</h3>
+            <p class="text-sm text-gray-500">Chat com hospitais</p>
           </div>
         </button>
       </nav>
@@ -130,8 +145,22 @@ const closeSidebar = () => {
   emit('close')
 }
 
+
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
 const navigateTo = (page) => {
   emit('navigate', page)
   closeSidebar()
+}
+
+const goToMedicamentos = () => {
+  closeSidebar()
+  router.push('/medicamentos')
+}
+
+const goToConversas = () => {
+  closeSidebar()
+  router.push('/conversas')
 }
 </script>
