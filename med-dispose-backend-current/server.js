@@ -1,5 +1,5 @@
-
 const express = require('express');
+const ChatMessage = require('./models/ChatMessage');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -7,6 +7,8 @@ const jwt = require('jsonwebtoken');
 const sequelize = require('./config/database');
 const Medicamento = require('./models/Medicamento');
 const Hospital = require('./models/Hospital');
+
+const hospitalsRouter = require('./routes/hospitals');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -20,6 +22,9 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
+
+// Register hospitals route after app is defined
+app.use('/api/hospitals', hospitalsRouter);
 
 // Dados simulados em memória (em produção, usar banco de dados)
 let usuarios = [];
@@ -478,6 +483,64 @@ app.get('/', (req, res) => {
   });
 });
 
+
+// --- CHAT ENDPOINTS ---
+// Obter histórico de mensagens entre o usuário logado e o hospital selecionado
+app.get('/api/chat/:hospitalId', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const hospitalId = parseInt(req.params.hospitalId);
+    // Buscar mensagens onde o usuário logado é remetente ou destinatário
+    const messages = await ChatMessage.findAll({
+      where: {
+        [require('sequelize').Op.or]: [
+          { fromId: userId, toId: hospitalId },
+          { fromId: hospitalId, toId: userId }
+        ]
+      },
+      order: [['createdAt', 'ASC']]
+    });
+
+    // Buscar nomes dos remetentes (hospitais)
+    const hospitalIds = [...new Set(messages.map(m => m.fromId))];
+    const hospitals = await Hospital.findAll({
+      where: { id: hospitalIds },
+      attributes: ['id', 'nome']
+    });
+    const hospitalMap = {};
+    hospitals.forEach(h => { hospitalMap[h.id] = h.nome; });
+
+    // Adicionar senderId e senderName para cada mensagem
+    const messagesWithSender = messages.map(msg => ({
+      ...msg.toJSON(),
+      senderId: msg.fromId,
+      senderName: hospitalMap[msg.fromId] || 'Desconhecido'
+    }));
+
+    res.json({ success: true, data: messagesWithSender });
+  } catch (error) {
+    console.error('Erro ao buscar mensagens do chat:', error);
+    res.status(500).json({ success: false, message: 'Erro ao buscar mensagens do chat' });
+  }
+});
+
+// Enviar mensagem para um hospital
+app.post('/api/chat/:hospitalId', authenticateToken, async (req, res) => {
+  try {
+    const fromId = req.user.id;
+    const toId = parseInt(req.params.hospitalId);
+    const { text } = req.body;
+    if (!text) {
+      return res.status(400).json({ success: false, message: 'Mensagem não pode ser vazia' });
+    }
+    const message = await ChatMessage.create({ fromId, toId, text });
+    res.json({ success: true, data: message });
+  } catch (error) {
+    console.error('Erro ao enviar mensagem:', error);
+    res.status(500).json({ success: false, message: 'Erro ao enviar mensagem' });
+  }
+});
+
 // Middleware de tratamento de erros
 app.use((err, req, res, next) => {
   console.error('Erro não tratado:', err);
@@ -497,12 +560,14 @@ app.use((req, res) => {
 
 
 // Inicializar dados e servidor
+
 inicializarDados()
   .then(async () => {
     try {
       await sequelize.authenticate();
       await Medicamento.sync();
       await Hospital.sync();
+      await ChatMessage.sync();
       app.listen(PORT, '0.0.0.0', () => {
         console.log(`Servidor rodando na porta ${PORT}`);
         console.log(`Acesse a API em: http://localhost:${PORT}`);

@@ -88,7 +88,7 @@
         </button>
 
         <button 
-          @click="navigateTo('medications')"
+          @click="goToMedicamentos"
           class="w-full flex items-center space-x-4 p-4 rounded-xl hover:bg-gray-50 transition-colors group"
         >
           <div class="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center group-hover:bg-gray-200 transition-colors">
@@ -99,6 +99,21 @@
           <div class="text-left">
             <h3 class="font-semibold text-gray-900">Medicamentos</h3>
             <p class="text-sm text-gray-500">Gerenciar estoque</p>
+          </div>
+        </button>
+
+        <button 
+          @click="goToConversas"
+          class="w-full flex items-center space-x-4 p-4 rounded-xl hover:bg-purple-50 transition-colors group"
+        >
+          <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center group-hover:bg-purple-200 transition-colors">
+            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2v-8a2 2 0 012-2h2m10 0V6a4 4 0 00-8 0v2m8 0H7" />
+            </svg>
+          </div>
+          <div class="text-left">
+            <h3 class="font-semibold text-gray-900">Conversas</h3>
+            <p class="text-sm text-gray-500">Chat com hospitais</p>
           </div>
         </button>
       </nav>
@@ -130,8 +145,22 @@ const closeSidebar = () => {
   emit('close')
 }
 
+
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
 const navigateTo = (page) => {
   emit('navigate', page)
   closeSidebar()
+}
+
+const goToMedicamentos = () => {
+  closeSidebar()
+  router.push('/medicamentos')
+}
+
+const goToConversas = () => {
+  closeSidebar()
+  router.push('/conversas')
 }
 </script>

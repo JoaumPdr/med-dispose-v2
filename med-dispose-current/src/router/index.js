@@ -29,6 +29,18 @@ const router = createRouter({
       path: '/mapa',
       name: 'mapa',
       component: () => import('../components/MapPage.vue')
+    },
+    {
+      path: '/medicamentos',
+      name: 'medicamentos',
+      component: () => import('../components/MedicamentosPage.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/conversas',
+      name: 'conversas',
+      component: () => import('../components/ChatPage.vue'),
+      meta: { requiresAuth: true }
     }
   ]
 })
