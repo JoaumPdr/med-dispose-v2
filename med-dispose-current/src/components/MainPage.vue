@@ -1,11 +1,10 @@
-
 <template>
   <div class="min-h-screen bg-gray-50">
     <!-- Sidebar -->
-    <Sidebar 
-      :isOpen="sidebarOpen" 
-      @close="closeSidebar"
-      @navigate="handleNavigation"
+    <Sidebar
+        :isOpen="sidebarOpen"
+        @close="closeSidebar"
+        @navigate="handleNavigation"
     />
     <!-- Header -->
     <Header @toggleMenu="toggleSidebar" />
@@ -36,11 +35,13 @@ import ExpiringMedications from './ExpiringMedications.vue'
 import FloatingActionButton from './FloatingActionButton.vue'
 import AddMedicationModal from './AddMedicationModal.vue'
 import { useAuthStore } from '../stores/auth'
+import { useRouter } from 'vue-router'
 
 const sidebarOpen = ref(false)
 const showAddMedication = ref(false)
 const authStore = useAuthStore()
 const authToken = computed(() => authStore.token || localStorage.getItem('token'))
+const router = useRouter()
 
 const toggleSidebar = () => {
   sidebarOpen.value = !sidebarOpen.value
@@ -61,6 +62,7 @@ const closeAddMedication = () => {
 const handleNavigation = (page) => {
   switch (page) {
     case 'dashboard':
+      router.push('/dashboard-novo')
       break
     case 'add-medication':
       openAddMedication()

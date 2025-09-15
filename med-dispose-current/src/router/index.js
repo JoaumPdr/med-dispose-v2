@@ -1,5 +1,12 @@
-import { createRouter, createWebHistory } from 'vue-router'
+mport { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+
+import DashboardPage from '../components/DashboardPage.vue'
+
+const routes = [
+
+  { path: '/dashboard', component: DashboardPage },
+]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -54,4 +61,4 @@ router.beforeEach((to, from, next) => {
   }
 })
 
-export default router
+export default router
