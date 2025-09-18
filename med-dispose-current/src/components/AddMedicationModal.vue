@@ -80,7 +80,7 @@ const handleSubmit = async () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': Bearer ${props.token}
+        'Authorization': `Bearer ${props.token}`
       },
       body: JSON.stringify({
         nome: nome.value,
